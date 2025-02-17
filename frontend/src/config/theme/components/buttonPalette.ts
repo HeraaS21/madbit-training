@@ -1,0 +1,141 @@
+import { ButtonPalette } from '@fattureincloud/fic-design-system/dist/components/buttons/button/buttonPalette'
+
+import { ficPalette } from '../palette'
+
+export const buttonPalette: ButtonPalette = {
+  primary: {
+    blue: {
+      normal: ficPalette.blue[500],
+      hover: ficPalette.blue[700],
+      active: ficPalette.blue[900],
+      text: ficPalette.white[100],
+      textHover: ficPalette.grey[100],
+    },
+    red: {
+      normal: ficPalette.red[500],
+      hover: ficPalette.red[700],
+      active: ficPalette.red[900],
+      text: ficPalette.white[100],
+      textHover: ficPalette.grey[100],
+    },
+    green: {
+      normal: ficPalette.green[500],
+      hover: ficPalette.green[700],
+      active: ficPalette.green[900],
+      text: ficPalette.white[100],
+      textHover: ficPalette.grey[100],
+    },
+    grey: {
+      normal: ficPalette.white[100],
+      hover: ficPalette.grey[100],
+      active: ficPalette.grey[200],
+      text: ficPalette.black[100],
+      textHover: ficPalette.black[100],
+    },
+    yellow: {
+      normal: ficPalette.yellow[500],
+      hover: ficPalette.yellow[700],
+      active: ficPalette.yellow[900],
+      text: ficPalette.white[100],
+      textHover: ficPalette.grey[100],
+    },
+    disabled: {
+      normal: ficPalette.grey[50],
+      hover: ficPalette.grey[50],
+      active: ficPalette.grey[50],
+      text: ficPalette.grey[200],
+      textHover: ficPalette.grey[200],
+    },
+  },
+  secondary: {
+    blue: {
+      normal: ficPalette.blue[50],
+      hover: ficPalette.blue[100],
+      active: ficPalette.blue[200],
+      text: ficPalette.blue[900],
+      textHover: ficPalette.blue[900],
+    },
+    red: {
+      normal: ficPalette.red[50],
+      hover: ficPalette.red[100],
+      active: ficPalette.red[200],
+      text: ficPalette.red[900],
+      textHover: ficPalette.red[900],
+    },
+    green: {
+      normal: ficPalette.green[50],
+      hover: ficPalette.green[100],
+      active: ficPalette.green[200],
+      text: ficPalette.green[900],
+      textHover: ficPalette.green[900],
+    },
+    yellow: {
+      normal: ficPalette.yellow[50],
+      hover: ficPalette.yellow[100],
+      active: ficPalette.yellow[200],
+      text: ficPalette.yellow[900],
+      textHover: ficPalette.yellow[900],
+    },
+    grey: {
+      normal: ficPalette.grey[50],
+      hover: ficPalette.grey[100],
+      active: ficPalette.grey[200],
+      text: ficPalette.black[100],
+      textHover: ficPalette.black[100],
+    },
+    disabled: {
+      normal: ficPalette.grey[50],
+      hover: ficPalette.grey[50],
+      active: ficPalette.grey[50],
+      text: ficPalette.grey[200],
+      textHover: ficPalette.grey[200],
+    },
+  },
+  text: {
+    blue: {
+      normal: 'transparent',
+      hover: ficPalette.blue[50],
+      active: ficPalette.blue[100],
+      text: ficPalette.blue[500],
+      textHover: ficPalette.blue[500],
+    },
+    red: {
+      normal: 'transparent',
+      hover: ficPalette.red[50],
+      active: ficPalette.red[100],
+      text: ficPalette.red[500],
+      textHover: ficPalette.red[500],
+    },
+    green: {
+      normal: 'transparent',
+      hover: ficPalette.green[50],
+      active: ficPalette.green[100],
+      text: ficPalette.green[500],
+      textHover: ficPalette.green[500],
+    },
+    grey: {
+      normal: 'transparent',
+      hover: ficPalette.grey[50],
+      active: ficPalette.grey[100],
+      text: ficPalette.grey[500],
+      textHover: ficPalette.grey[500],
+    },
+    yellow: {
+      normal: 'transparent',
+      hover: ficPalette.yellow[50],
+      active: ficPalette.yellow[100],
+      text: ficPalette.yellow[500],
+      textHover: ficPalette.yellow[500],
+    },
+    disabled: {
+      normal: 'transparent',
+      hover: 'transparent',
+      active: 'transparent',
+      text: ficPalette.grey[200],
+      textHover: ficPalette.grey[200],
+    },
+  },
+  defaultType: 'primary',
+  defaultColor: 'blue',
+  defaultSize: 'medium',
+}
