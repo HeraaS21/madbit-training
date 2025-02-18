@@ -4,7 +4,7 @@ import { AppDispatch, RootState } from "../../store/store";
 import { loginUser } from "../../store/authSlice"; 
 import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
-import { InputText } from "@fattureincloud/fic-design-system";
+import { Button, InputText } from "@fattureincloud/fic-design-system";
 
 interface LoginFormState {
   email: string;
@@ -62,17 +62,19 @@ const Login: React.FC = () => {
      status="normal"
       value={formData.password}
 />
-
- 
-
-        <button type="submit" disabled={loading} className="login-button">
-          {loading ? "Logging in..." : "Login"}
-        </button>
+        <Button
+          color="blue"
+          onClick={handleLogin}
+          size="large"
+          text={loading ? "Logging in..." : "Login"}
+          type="primary"
+          isDisabled={loading}
+        />
       </form>
       {error && <p className="error-message">{error}</p>}
    
 
-      <h5>Don't have an account? <Link to="/register">Register now!</Link></h5>
+      <h5>Don't have an account? <Link to="/register" className="register-link">Register now!</Link></h5>
     </div>
   );
 };

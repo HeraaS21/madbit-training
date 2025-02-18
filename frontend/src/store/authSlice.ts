@@ -5,7 +5,7 @@ interface User {
   firstName: string;
   lastName: string;
   email: string;
-  token?: string;
+  access_token: string;
 }
 
 interface AuthState {
