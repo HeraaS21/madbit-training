@@ -1,21 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const fetchAllPosts = async () => {
-  const { data } = await axios.get("http://localhost:8080/posts");
-  console.log("Fetched posts:", data); 
+const fetchUserPosts = async (userId: number) => {
+  const { data } = await axios.get(`http://localhost:8080/posts?userId=${userId}`);
   return data;
 };
 
 export const useUserPosts = (userId?: number) => {
   return useQuery({
-    queryKey: ["posts"],
-    queryFn: fetchAllPosts,
-    select: (data) => {
-      const filteredPosts = data.filter((post: { userId: number }) => post.userId === userId);
-      console.log("Filtered posts:", filteredPosts); 
-      return filteredPosts;
-    },
+    queryKey: ["userPosts", userId],
+    queryFn: () => fetchUserPosts(userId!),
     enabled: !!userId,
   });
 };

@@ -1,16 +1,30 @@
-const UserProfile = ({ user }: { user: { full_name: string; email: string; picture?: string | null } }) => {
-    return (
-      <div className="user-profile">
-        <img 
-          src={user.picture || "https://via.placeholder.com/150"} 
-          alt="User Avatar" 
-          className="avatar" 
-        />
-        <h3>{user.full_name}</h3>
-        <p>{user.email}</p>
-      </div>
-    );
-  };
-  
-  export default UserProfile;
-  
+
+import { Avatar } from "@fattureincloud/fic-design-system";
+import { useUser } from "../../hooks/useUser";
+
+
+const getInitials = (fullName: string): string => {
+  return fullName
+    .split(" ")
+    .map((name) => name.charAt(0).toUpperCase())
+    .join("");
+};
+
+const userProfile = () => {
+  const { data: user, isLoading, error } = useUser();
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  return (
+    <div>
+      <h2>{user.full_name}</h2>
+      
+      <Avatar text={getInitials(user.full_name)} size={40} />
+      
+      <p>Email: {user.email}</p>
+    </div>
+  );
+};
+
+export default userProfile;

@@ -1,41 +1,50 @@
-import { useSelector } from "react-redux";
+import { Avatar } from "@fattureincloud/fic-design-system";
 import { useUser } from "../../../hooks/useUser";
-import { RootState } from "../../../store/store";
-import UserProfile from "../../../components/user/userProfile";
+
+import { useState } from "react";
+import { Button } from "@fattureincloud/fic-design-system";
+import PostModal from "../../../components/post/PostModal";
 import { useUserPosts } from "../../../hooks/ useUserPosts";
 
 
+const getInitials = (fullName: string): string => {
+  return fullName
+    .split(" ")
+    .map((name) => name.charAt(0).toUpperCase())
+    .join("");
+};
+
 const Profile = () => {
-  const user = useSelector((state: RootState) => state.auth.user);
+  const { data: user, isLoading, error } = useUser();
+  const { data: posts, isLoading: postsLoading } = useUserPosts(user?.id);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (!user) {
-    return <p>User is not logged in</p>;
-  }
-
-  const { data: userData, isLoading, error } = useUser();
-  const { data: userPosts, isLoading: postsLoading, error: postsError } = useUserPosts(user.id);
-
-  if (isLoading || postsLoading) return <p>Loading...</p>;
-  if (error || postsError) return <p>Error loading data</p>;
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <div>
-      <h2>Welcome, {userData?.full_name}!</h2>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <Avatar text={getInitials(user.full_name)} size={40} />
+        <h2>{user.full_name}</h2>
+      </div>
 
-      {userData && <UserProfile user={userData} />}
+      <Button text="Add Post" onClick={() => setIsModalOpen(true)} />
 
-      <h3>Your Posts:</h3>
-      {userPosts?.length ? (
+      <PostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+      <h3>Your Posts</h3>
+      {postsLoading ? (
+        <p>Loading posts...</p>
+      ) : (
         <ul>
-          {userPosts.map((post: { id: number; title: string; text: string }) => (
+          {posts?.map((post) => (
             <li key={post.id}>
               <h4>{post.title}</h4>
               <p>{post.text}</p>
             </li>
           ))}
         </ul>
-      ) : (
-        <p>No posts yet.</p>
       )}
     </div>
   );
