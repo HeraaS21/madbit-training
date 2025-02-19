@@ -1,15 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const fetchUser = async (userId: number) => {
-  const { data } = await axios.get(`http://localhost:8080/users/${userId}`);
+const fetchUser = async () => {
+  const { data } = await axios.get("http://localhost:8080/auth/me", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`, 
+    },
+  });
   return data;
 };
 
-export const useUser = (userId?: number) => {
+export const useUser = () => {
   return useQuery({
-    queryKey: ["user", userId],
-    queryFn: () => fetchUser(userId!),
-    enabled: !!userId, 
+    queryKey: ["user"],
+    queryFn: fetchUser,
   });
 };

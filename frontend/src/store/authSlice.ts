@@ -1,12 +1,15 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
+
 interface User {
+  full_name: string;
   firstName: string;
   lastName: string;
   email: string;
   access_token: string;
 }
+
 
 interface AuthState {
   user: User | null;
@@ -14,11 +17,6 @@ interface AuthState {
   error: string | null;
 }
 
-const initialState: AuthState = {
-  user: JSON.parse(localStorage.getItem("user") || "null"), 
-  loading: false,
-  error: null,
-};
 
 export const registerUser = createAsyncThunk<
   User, 
@@ -32,25 +30,40 @@ export const registerUser = createAsyncThunk<
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data.message || "This email already has an account");
+        return rejectWithValue(error.response.data.message || "Error");
       }
       return rejectWithValue("Registration failed. Please try again.");
     }
   }
 );
 
+const initialState: AuthState = {
+  user: null,  
+  loading: false,
+  error: null,
+};
+
 export const loginUser = createAsyncThunk<
   User,
   { email: string; password: string },
   { rejectValue: string }
->("auth/login", async (credentials, { rejectWithValue }) => {
-  try {
-    const response = await axios.post<User>("http://localhost:8080/auth/login", credentials); 
-    return response.data; 
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || "Login failed");
+>(
+  "auth/login",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await axios.post<User>("http://localhost:8080/auth/login", credentials);
+      
+      localStorage.setItem("user", JSON.stringify(response.data));
+      localStorage.setItem("access_token", response.data.access_token);
+
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Login failed");
+    }
   }
-});
+);
+
+
 
 export const logoutUser = createAsyncThunk("auth/logout", async () => {
   localStorage.removeItem("user");

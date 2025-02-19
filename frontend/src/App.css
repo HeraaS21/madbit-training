@@ -41,18 +41,15 @@
   color: #888;
 }
 
-
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; 
+  min-height: 100vh;
 }
-
 
 .main-content {
-  flex-grow: 1; 
+  flex-grow: 1;
 }
-
 
 .bottom-nav {
   position: fixed;

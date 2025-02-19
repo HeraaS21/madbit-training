@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { registerUser } from "../../store/authSlice";
-import { Link, useNavigate } from "react-router-dom"; 
+import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
 import { Button, InputText } from "@fattureincloud/fic-design-system";
 
@@ -15,9 +15,9 @@ interface FormData {
 
 const Register: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const { loading, error } = useSelector((state: RootState) => state.auth);
-  
+
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -25,18 +25,29 @@ const Register: React.FC = () => {
     password: "",
   });
 
+  const isFormValid = Object.values(formData).every((value) => value.trim() !== "");
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    const resultAction = await dispatch(registerUser(formData));
+    
+    const userData = {
+      email: formData.email,
+      password: formData.password,
+      first_name: formData.firstName,  
+      last_name: formData.lastName,
+    };
+  
+    const resultAction = await dispatch(registerUser(userData));
   
     if (registerUser.fulfilled.match(resultAction)) {
       navigate("/");
     }
   };
+  
 
   return (
     <div className="register-container">
@@ -45,7 +56,6 @@ const Register: React.FC = () => {
         <InputText
           inputSize="large"
           inputType="text"
-          label="First Name"
           name="firstName"
           placeholder="First Name"
           required
@@ -56,7 +66,6 @@ const Register: React.FC = () => {
         <InputText
           inputSize="large"
           inputType="text"
-          label="Last Name"
           name="lastName"
           placeholder="Last Name"
           required
@@ -66,8 +75,7 @@ const Register: React.FC = () => {
         />
         <InputText
           inputSize="large"
-          inputType="email"
-          label="Email"
+          inputType="text"
           name="email"
           placeholder="Email"
           required
@@ -78,7 +86,6 @@ const Register: React.FC = () => {
         <InputText
           inputSize="large"
           inputType="password"
-          label="Password"
           name="password"
           placeholder="Password"
           required
@@ -93,12 +100,12 @@ const Register: React.FC = () => {
           size="large"
           text={loading ? "Registering..." : "Register"}
           type="primary"
-          isDisabled={loading}
+          isDisabled={loading || !isFormValid}
         />
       </form>
 
-      {error && <p className="error-message">{error}</p>} 
-      
+      {error && <p className="error-message">{error}</p>}
+
       <h5>
         Already have an account? <Link to="/" className="register-link">Login</Link>
       </h5>
