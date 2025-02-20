@@ -1,7 +1,9 @@
+import React, { useState } from "react";
 import { useUser } from "../../../hooks/useUser";
-import { useState } from "react";
 import PostModal from "../../../components/post/PostModal";
 import UserProfile from "../../../components/user/userProfile";
+
+import Post from "../../../components/post/Post";
 import { useUserPosts } from "../../../hooks/ useUserPosts";
 
 const Profile = () => {
@@ -13,21 +15,17 @@ const Profile = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div>
+    <div className="max-w-2xl mx-auto p-4">
       <UserProfile />
 
       <PostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
-      <h2>{user.full_name}'s Posts</h2>
+      <h2 className="text-2xl font-bold mt-4">{user.full_name}'s Posts</h2>
+
       {posts?.length ? (
-        posts.map((post) => (
-          <div key={post.id}>
-            <h3>{post.title}</h3>
-            <p>{post.text}</p>
-          </div>
-        ))
+        posts.map((post) => <Post key={post.id} post={post} />)
       ) : (
-        <p>No posts found.</p>
+        <p className="text-gray-500">No posts found.</p>
       )}
     </div>
   );

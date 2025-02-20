@@ -35,6 +35,7 @@ const UserProfile = (): JSX.Element => {
           text={user.picture ? "" : getInitials(user.full_name)}
           size={40}
           src={user.picture || undefined}
+          onClick={() => {}}
         />
         <Dropdown
           title={<span>{user.full_name}</span>}
