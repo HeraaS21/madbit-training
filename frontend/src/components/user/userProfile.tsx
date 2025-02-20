@@ -1,7 +1,11 @@
-
-import { Avatar } from "@fattureincloud/fic-design-system";
+import {
+  Avatar,
+  Dropdown,
+  DropdownItemProps,
+} from "@fattureincloud/fic-design-system";
 import { useUser } from "../../hooks/useUser";
-
+import { useLogout } from "../../pages/auth/Logout";
+import { IoIosLogOut } from "react-icons/io";
 
 const getInitials = (fullName: string): string => {
   return fullName
@@ -10,21 +14,36 @@ const getInitials = (fullName: string): string => {
     .join("");
 };
 
-const userProfile = () => {
+const UserProfile = (): JSX.Element => {
   const { data: user, isLoading, error } = useUser();
+  const handleLogout = useLogout();
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
+  const content: DropdownItemProps[] = [
+    { text: user.email, type: "default" },
+    { text: <IoIosLogOut />, type: "danger", onClick: handleLogout },
+  ];
+
   return (
-    <div>
-      <h2>{user.full_name}</h2>
-      
-      <Avatar text={getInitials(user.full_name)} size={40} />
-      
-      <p>Email: {user.email}</p>
+    <div
+      style={{ display: "flex", justifyContent: "flex-end", padding: "10px" }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <Avatar
+          text={user.picture ? "" : getInitials(user.full_name)}
+          size={40}
+          src={user.picture || undefined}
+        />
+        <Dropdown
+          title={<span>{user.full_name}</span>}
+          content={content}
+          triggerStyles={{ backgroundColor: "transparent", boxShadow: "none" }}
+        />
+      </div>
     </div>
   );
 };
 
-export default userProfile;
+export default UserProfile;
