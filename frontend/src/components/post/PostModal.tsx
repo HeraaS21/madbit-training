@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button, InputText } from "@fattureincloud/fic-design-system";
 import { useCreatePost } from "../../hooks/useCreatePost";
 
@@ -8,10 +8,17 @@ interface PostModalProps {
 }
 
 const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose }) => {
-    console.log('testttt');
-    
+
+
   const { mutate, isLoading } = useCreatePost();
   const [postData, setPostData] = useState({ title: "", text: "" });
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen && titleInputRef.current) {
+      titleInputRef.current.focus();
+    }
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +37,7 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose }) => {
             value={postData.title}
             setValue={(value) => setPostData({ ...postData, title: value })}
             required
+            ref={titleInputRef} 
           />
           <InputText
             label="Text"
@@ -37,7 +45,7 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose }) => {
             setValue={(value) => setPostData({ ...postData, text: value })}
             required
           />
-          <Button type="primary" text={isLoading ? "Posting..." : "Post"} onClick={handleSubmit}/>
+          <Button type="primary" text={isLoading ? "Posting..." : "Post"} onClick={handleSubmit} />
           <Button text="Cancel" onClick={onClose} color="red" />
         </form>
       </div>
