@@ -1,7 +1,7 @@
 import { useComments } from "../../hooks/useComments";
 import { usePosts } from "../../hooks/usePosts";
 import { useUser } from "../../hooks/useUser";
-import "./style.css"; // Import CSS file
+import "./style.css";
 
 const PostList = () => {
   const { data: loggedInUser, isLoading: userLoading } = useUser();
@@ -26,23 +26,40 @@ const PostItem = ({ post }) => {
   const { data: comments, isLoading: commentsLoading } = useComments(post.id);
   const { data: author, isLoading: authorLoading } = useUser(post.userId);
 
-  if (commentsLoading || authorLoading) return <div>Loading post details...</div>;
+  if (commentsLoading || authorLoading)
+    return <div>Loading post details...</div>;
 
   return (
     <div className="post-card">
       <h2 className="post-title">{post.title}</h2>
       <p className="post-text">{post.text}</p>
-      <p className="post-author">By: {author ? `${author.firstName} ${author.lastName}` : "Author not found"}</p>
+      <p className="post-author">
+        By:{" "}
+        {post.user
+          ? `${post.user.first_name} ${post.user.last_name}`
+          : "Unknown"}
+      </p>
 
       <div className="comments-section">
         <h3 className="comments-title">Comments ({comments?.length || 0}):</h3>
         <ul>
           {comments?.map((comment) => (
             <li key={comment.id} className="comment">
-              <p className="comment-text">{comment.text}</p>
-              <p className="comment-author">
-                - {comment.user?.firstName} {comment.user?.lastName}
-              </p>
+              <div className="comment-container">
+                <img
+                  src={comment.user?.picture || "/default-profile.png"}
+                  className="comment-profile-pic"
+                />
+
+                <div>
+                  <p className="comment-author">
+                    {comment.user
+                      ? `${comment.user.firstName} ${comment.user.lastName}`
+                      : "Anonymous"}
+                  </p>
+                  <p className="comment-text">{comment.text}</p>
+                </div>
+              </div>
             </li>
           ))}
         </ul>

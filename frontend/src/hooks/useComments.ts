@@ -8,27 +8,39 @@ const authHeader = {
 };
 
 export const useComments = (postId: number) => {
-  return useQuery({
-    queryKey: ["comments", postId],
-    queryFn: async () => {
-      try {
-      
-        const { data } = await axios.get(`${API_URL}/${postId}/comments`, {
-          headers: authHeader,
-        });
-        console.log("Comments data:", data); 
-        return data;
-      } catch (error) {
+    return useQuery({
+      queryKey: ["comments", postId],
+      queryFn: async () => {
+        try {
+          const { data } = await axios.get(`${API_URL}/${postId}/comments`, {
+            headers: authHeader,
+          });
+  
+          console.log("Comments data:", data); 
+  
+          return data.map((comment: any) => ({
+            id: comment.id,
+            text: comment.text,
+            user: comment.user
+              ? {
+                  firstName: comment.user.first_name, 
+                  lastName: comment.user.last_name,
+                  picture: comment.user.picture,
+                }
+              : null,
+          }));
+        } catch (error) {
+          console.error("Error fetching comments:", error);
+          throw error;
+        }
+      },
+      enabled: !!postId,
+      onError: (error) => {
         console.error("Error fetching comments:", error);
-        throw error; 
-      }
-    },
-    enabled: !!postId, 
-    onError: (error) => {
-      console.error("Error fetching comments:", error);
-    },
-  });
-};
+      },
+    });
+  };
+  
 
   
   

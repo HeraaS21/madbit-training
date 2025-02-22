@@ -2,7 +2,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-
 const fetchPosts = async (userId: number) => {
   const { data } = await axios.get("http://localhost:8080/posts", {
     headers: {
@@ -21,7 +20,6 @@ export const useUserPosts = (userId?: number) => {
   });
 };
 
-
 export const useDeletePost = () => {
   const queryClient = useQueryClient();
 
@@ -39,12 +37,17 @@ export const useDeletePost = () => {
   });
 };
 
-
 export const useEditPost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ postId, updatedPost }: { postId: number; updatedPost: { title: string; content: string } }) => {
+    mutationFn: async ({
+      postId,
+      updatedPost,
+    }: {
+      postId: number;
+      updatedPost: { title: string; content: string };
+    }) => {
       const { data } = await axios.put(
         `http://localhost:8080/posts/${postId}`,
         updatedPost,

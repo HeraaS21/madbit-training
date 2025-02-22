@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useEditPost } from "../../hooks/ useUserPosts";
 
-
 interface EditPostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -12,11 +11,14 @@ interface EditPostModalProps {
   } | null;
 }
 
-const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post }) => {
+const EditPostModal: React.FC<EditPostModalProps> = ({
+  isOpen,
+  onClose,
+  post,
+}) => {
   const { mutate, isLoading } = useEditPost();
   const [postData, setPostData] = useState({ title: "", text: "" });
 
- 
   useEffect(() => {
     if (post) {
       setPostData({ title: post.title, text: post.text });
@@ -43,24 +45,26 @@ const EditPostModal: React.FC<EditPostModalProps> = ({ isOpen, onClose, post }) 
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">Edit Post</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-      
           <div>
             <label className="block text-gray-700 font-medium">Title</label>
             <input
               type="text"
               value={postData.title}
-              onChange={(e) => setPostData({ ...postData, title: e.target.value })}
+              onChange={(e) =>
+                setPostData({ ...postData, title: e.target.value })
+              }
               required
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          
           <div>
             <label className="block text-gray-700 font-medium">Text</label>
             <textarea
               value={postData.text}
-              onChange={(e) => setPostData({ ...postData, text: e.target.value })}
+              onChange={(e) =>
+                setPostData({ ...postData, text: e.target.value })
+              }
               required
               className="w-full border border-gray-300 rounded-md p-2 h-32 resize-none focus:ring-2 focus:ring-blue-500"
             />
