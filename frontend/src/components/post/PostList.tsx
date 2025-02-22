@@ -1,44 +1,46 @@
-import { useComments } from "../../hooks/useComments";
-import { usePosts } from "../../hooks/usePosts";
+import { useState } from "react";
+import { useComments, useAddComment, useEditComment, useDeleteComment } from "../../hooks/useComments";
 import { useUser } from "../../hooks/useUser";
-import "./style.css";
-
-const PostList = () => {
-  const { data: loggedInUser, isLoading: userLoading } = useUser();
-
-  if (userLoading) return <div>Loading user info...</div>;
-
-  const { data: posts, isLoading, isError } = usePosts(loggedInUser.id);
-
-  if (isLoading) return <div>Loading posts...</div>;
-  if (isError) return <div>Error loading posts</div>;
-
-  return (
-    <div className="post-list">
-      {posts?.map((post) => (
-        <PostItem key={post.id} post={post} />
-      ))}
-    </div>
-  );
-};
 
 const PostItem = ({ post }) => {
+  const { data: loggedInUser } = useUser();
   const { data: comments, isLoading: commentsLoading } = useComments(post.id);
-  const { data: author, isLoading: authorLoading } = useUser(post.userId);
+  const addComment = useAddComment();
+  const editComment = useEditComment();
+  const deleteComment = useDeleteComment();
 
-  if (commentsLoading || authorLoading)
-    return <div>Loading post details...</div>;
+  const [newComment, setNewComment] = useState("");
+  const [editMode, setEditMode] = useState<{ [key: number]: boolean }>({});
+  const [editedCommentText, setEditedCommentText] = useState<{ [key: number]: string }>({});
+
+  if (commentsLoading) return <div>Loading comments...</div>;
 
   return (
     <div className="post-card">
       <h2 className="post-title">{post.title}</h2>
       <p className="post-text">{post.text}</p>
       <p className="post-author">
-        By:{" "}
-        {post.user
-          ? `${post.user.first_name} ${post.user.last_name}`
-          : "Unknown"}
+        By: {post.user ? `${post.user.first_name} ${post.user.last_name}` : "Unknown"}
       </p>
+
+      <div className="add-comment">
+        <input
+          type="text"
+          placeholder="Write a comment..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        />
+        <button
+          onClick={() => {
+            if (newComment.trim()) {
+              addComment.mutate({ postId: post.id, content: newComment });
+              setNewComment("");
+            }
+          }}
+        >
+          Add Comment
+        </button>
+      </div>
 
       <div className="comments-section">
         <h3 className="comments-title">Comments ({comments?.length || 0}):</h3>
@@ -49,15 +51,56 @@ const PostItem = ({ post }) => {
                 <img
                   src={comment.user?.picture || "/default-profile.png"}
                   className="comment-profile-pic"
+                  alt={`${comment.user?.firstName} ${comment.user?.lastName}`}
                 />
 
                 <div>
                   <p className="comment-author">
-                    {comment.user
-                      ? `${comment.user.firstName} ${comment.user.lastName}`
-                      : "Anonymous"}
+                    {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : "Anonymous"}
                   </p>
-                  <p className="comment-text">{comment.text}</p>
+
+                  {editMode[comment.id] ? (
+                    <>
+                      <input
+                        type="text"
+                        value={editedCommentText[comment.id]}
+                        onChange={(e) =>
+                          setEditedCommentText({ ...editedCommentText, [comment.id]: e.target.value })
+                        }
+                      />
+                      <button
+                        onClick={() => {
+                          editComment.mutate({
+                            postId: post.id,
+                            commentId: comment.id,
+                            newText: editedCommentText[comment.id],
+                          });
+                          setEditMode({ ...editMode, [comment.id]: false });
+                        }}
+                      >
+                        Save
+                      </button>
+                      <button onClick={() => setEditMode({ ...editMode, [comment.id]: false })}>Cancel</button>
+                    </>
+                  ) : (
+                    <p className="comment-text">{comment.text}</p>
+                  )}
+
+                  {loggedInUser?.id === comment.user?.id && (
+                    <div className="comment-actions">
+                      <button
+                        onClick={() => {
+                          setEditMode({ ...editMode, [comment.id]: true });
+                          setEditedCommentText({ ...editedCommentText, [comment.id]: comment.text });
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button onClick={() => deleteComment.mutate({ postId: post.id, commentId: comment.id })}>
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </li>
@@ -68,4 +111,4 @@ const PostItem = ({ post }) => {
   );
 };
 
-export default PostList;
+export default PostItem;
