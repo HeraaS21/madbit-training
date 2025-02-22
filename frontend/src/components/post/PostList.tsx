@@ -34,14 +34,14 @@ const PostItem = ({ post }) => {
   return (
     <div>
       <h2>{post.title}</h2>
-      <p>{post.content}</p>
+      <p>{post.text}</p>
       <p>By: {author ? `${author.firstName} ${author.lastName}` : "Author not found"}</p>
 
       <h3>Comments ({comments?.length || 0}):</h3>
       <ul>
         {comments?.map((comment) => (
           <li key={comment.id}>
-            {comment.content} - <strong>{comment.user?.firstName} {comment.user?.lastName}</strong>
+            {comment.text} - <strong>{comment.user?.firstName} {comment.user?.lastName}</strong>
           </li>
         ))}
       </ul>
