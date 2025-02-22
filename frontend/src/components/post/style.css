@@ -61,3 +61,72 @@
     margin: auto;
   }
   
+
+
+  /*post list*/
+
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.post-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+}
+
+.post-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.post-text {
+  color: #555;
+  margin-top: 0.5rem;
+}
+
+.post-author {
+  font-size: 0.875rem;
+  color: #777;
+  margin-top: 0.5rem;
+}
+
+.comments-section {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #ddd;
+}
+
+.comments-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #444;
+}
+
+.comment {
+  background-color: #f5f5f5;
+  padding: 0.5rem;
+  border-radius: 5px;
+  margin-top: 0.5rem;
+}
+
+.comment-text {
+  color: #333;
+}
+
+
+.comment-author {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.25rem;
+}

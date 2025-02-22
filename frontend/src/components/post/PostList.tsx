@@ -1,6 +1,7 @@
 import { useComments } from "../../hooks/useComments";
 import { usePosts } from "../../hooks/usePosts";
 import { useUser } from "../../hooks/useUser";
+import "./style.css"; // Import CSS file
 
 const PostList = () => {
   const { data: loggedInUser, isLoading: userLoading } = useUser();
@@ -13,7 +14,7 @@ const PostList = () => {
   if (isError) return <div>Error loading posts</div>;
 
   return (
-    <div>
+    <div className="post-list">
       {posts?.map((post) => (
         <PostItem key={post.id} post={post} />
       ))}
@@ -25,26 +26,27 @@ const PostItem = ({ post }) => {
   const { data: comments, isLoading: commentsLoading } = useComments(post.id);
   const { data: author, isLoading: authorLoading } = useUser(post.userId);
 
-  console.log('Post:', post);
-  console.log('Comments:', comments);
-  console.log('Author:', author);
-
   if (commentsLoading || authorLoading) return <div>Loading post details...</div>;
 
   return (
-    <div>
-      <h2>{post.title}</h2>
-      <p>{post.text}</p>
-      <p>By: {author ? `${author.firstName} ${author.lastName}` : "Author not found"}</p>
+    <div className="post-card">
+      <h2 className="post-title">{post.title}</h2>
+      <p className="post-text">{post.text}</p>
+      <p className="post-author">By: {author ? `${author.firstName} ${author.lastName}` : "Author not found"}</p>
 
-      <h3>Comments ({comments?.length || 0}):</h3>
-      <ul>
-        {comments?.map((comment) => (
-          <li key={comment.id}>
-            {comment.text} - <strong>{comment.user?.firstName} {comment.user?.lastName}</strong>
-          </li>
-        ))}
-      </ul>
+      <div className="comments-section">
+        <h3 className="comments-title">Comments ({comments?.length || 0}):</h3>
+        <ul>
+          {comments?.map((comment) => (
+            <li key={comment.id} className="comment">
+              <p className="comment-text">{comment.text}</p>
+              <p className="comment-author">
+                - {comment.user?.firstName} {comment.user?.lastName}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
