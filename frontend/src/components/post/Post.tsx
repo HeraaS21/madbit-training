@@ -1,4 +1,5 @@
 import React from "react";
+import "./style.css";
 import Buttons from "./Buttons";
 
 interface PostProps {
@@ -11,14 +12,15 @@ interface PostProps {
 
 const Post: React.FC<PostProps> = ({ post }) => {
   return (
-    <div className="border rounded-lg shadow-lg p-4 mb-4">
-      <h3 className="text-xl font-semibold">{post.title}</h3>
-      <p className="text-gray-700">{post.text}</p>
+    <div className="post-card">
+      <h3 className="post-title">{post.title}</h3>
+      <p className="post-text">{post.text}</p>
 
-    
-      <div className="mt-2 text-sm text-gray-500">Comments: 0</div>
+      <div className="post-footer">Comments: 0</div>
 
-      <Buttons post={post} />
+      <div className="post-buttons">
+        <Buttons post={post} />
+      </div>
     </div>
   );
 };

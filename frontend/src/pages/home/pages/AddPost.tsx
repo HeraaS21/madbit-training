@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button } from "@fattureincloud/fic-design-system";
-import PostModal from "../../../components/post/PostModal";
+import PostModal from "../../../components/post/AddPostModal";
 
 const AddPost = () => {
-    console.log('addpost');
-    
+  console.log("addpost");
+
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (

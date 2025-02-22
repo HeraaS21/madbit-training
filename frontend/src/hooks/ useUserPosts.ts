@@ -1,3 +1,4 @@
+//r.query to fetch edit & delete post on users profile
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
