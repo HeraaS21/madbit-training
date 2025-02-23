@@ -36,7 +36,7 @@ const Profile = () => {
         />
       )}
 
-      <h2 className="text-2xl font-bold mt-4">{user.full_name}'s Posts</h2>
+      <h2 style={{ fontFamily: "Helvetica" }}>{user.full_name}'s Posts</h2>
 
       {posts?.length ? (
         <div className="grid gap-4 mt-4">

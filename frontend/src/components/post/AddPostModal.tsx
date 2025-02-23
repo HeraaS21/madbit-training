@@ -45,6 +45,7 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose }) => {
             setValue={(value) => setPostData({ ...postData, text: value })}
             required
           />
+          <br/>
           <Button type="primary" text={isLoading ? "Posting..." : "Post"} onClick={handleSubmit} />
           <Button text="Cancel" onClick={onClose} color="red" />
         </form>

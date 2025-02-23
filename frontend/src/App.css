@@ -65,7 +65,14 @@
   border-top: 1px solid #ccc;
 }
 
+
 .nav-icon {
   font-size: 28px;
+  margin: 0 5px;
   cursor: pointer;
+  color: #1260b4;
+  gap: 1px;
+}
+.nav-icon:hover {
+  color: #007bff;
 }

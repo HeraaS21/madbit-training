@@ -10,7 +10,8 @@ const AddPost = () => {
   return (
     <div>
       <h1>Posts</h1>
-      <Button text="Add Post" onClick={() => setModalOpen(true)} />
+      <Button text="Add Post" onClick={() => setModalOpen(true)} color="blue"/>
+        <br/>
       <PostModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );

@@ -1,6 +1,8 @@
-import React from "react";
-import { useDeletePost, useEditPost } from "../../hooks/ useUserPosts";
+import React, { useState } from "react";
 import { Button } from "@fattureincloud/fic-design-system";
+import EditPostModal from "./EditPostModal";
+import { useDeletePost } from "../../hooks/ useUserPosts";
+
 interface ButtonsProps {
   post: {
     id: number;
@@ -11,41 +13,37 @@ interface ButtonsProps {
 
 const Buttons: React.FC<ButtonsProps> = ({ post }) => {
   const deletePost = useDeletePost();
-  const editPost = useEditPost();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleDelete = () => {
     deletePost.mutate(post.id);
   };
 
-  const handleEdit = () => {
-    const newTitle = prompt("Enter new title", post.title);
-    const newText = prompt("Enter new content", post.text);
-
-    if (newTitle !== null && newText !== null) {
-      editPost.mutate({
-        postId: post.id,
-        updatedPost: { title: newTitle, text: newText },
-      });
-    }
-  };
-
   return (
     <div className="flex gap-2 mt-3">
       <Button
-        color="blue"
-        onClick={handleEdit}
+        color="grey"
+        onClick={() => setIsEditModalOpen(true)}
         size="medium"
         text="Edit"
-        type="primary"
+        type="text"
       />
 
       <Button
-        color="blue"
+        color="red"
         onClick={handleDelete}
         size="medium"
         text="Delete"
-        type="primary"
+        type="text"
       />
+
+      {isEditModalOpen && (
+        <EditPostModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          post={post}
+        />
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import {
   Dropdown,
   DropdownItemProps,
 } from "@fattureincloud/fic-design-system";
+import { useState } from "react";
 import { useUser } from "../../hooks/useUser";
 import { useLogout } from "../../pages/auth/Logout";
 import { IoIosLogOut } from "react-icons/io";
@@ -15,6 +16,7 @@ const getInitials = (fullName: string): string => {
 };
 
 const UserProfile = (): JSX.Element => {
+  const [isOpen, setIsOpen] = useState(false);
   const { data: user, isLoading, error } = useUser();
   const handleLogout = useLogout();
 
@@ -35,13 +37,17 @@ const UserProfile = (): JSX.Element => {
           text={user.picture ? "" : getInitials(user.full_name)}
           size={40}
           src={user.picture || undefined}
-          onClick={() => {}}
+          onClick={() => setIsOpen(!isOpen)}
         />
-        <Dropdown
-          title={<span>{user.full_name}</span>}
-          content={content}
-          triggerStyles={{ backgroundColor: "transparent", boxShadow: "none" }}
-        />
+        <div>
+          {isOpen && (
+            <Dropdown
+              title={<span>{user.full_name}</span>}
+              content={content}
+              triggerStyles={{ color: "red", boxShadow: "none" }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

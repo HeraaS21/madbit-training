@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { Button, InputText } from "@fattureincloud/fic-design-system";
 import { useEditPost } from "../../hooks/ useUserPosts";
-
+import "./style.css";
 interface EditPostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -18,6 +19,7 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
 }) => {
   const { mutate, isLoading } = useEditPost();
   const [postData, setPostData] = useState({ title: "", text: "" });
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (post) {
@@ -25,11 +27,18 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
     }
   }, [post]);
 
+  useEffect(() => {
+    if (isOpen && titleInputRef.current) {
+      titleInputRef.current.focus();
+    }
+  }, [isOpen]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!post) return;
+
     mutate(
-      { id: post.id, ...postData },
+      { postId: post.id, updatedPost: postData },
       {
         onSuccess: () => {
           onClose();
@@ -41,50 +50,33 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
   if (!isOpen || !post) return null;
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Edit Post</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-gray-700 font-medium">Title</label>
-            <input
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h2>Edit Post</h2>
+        <form onSubmit={handleSubmit}>
+          <InputText
+            label="Title"
+            value={postData.title}
+            setValue={(value) => setPostData({ ...postData, title: value })}
+            required
+            ref={titleInputRef}
+          />
+          <InputText
+            label="Text"
+            value={postData.text}
+            setValue={(value) => setPostData({ ...postData, text: value })}
+            required
+          />
+          <div className="flex gap-2 mt-3">
+            <Button
               type="text"
-              value={postData.title}
-              onChange={(e) =>
-                setPostData({ ...postData, title: e.target.value })
-              }
-              required
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
+              text={isLoading ? "Updating..." : "Update"}
+              onClick={handleSubmit}
             />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium">Text</label>
-            <textarea
-              value={postData.text}
-              onChange={(e) =>
-                setPostData({ ...postData, text: e.target.value })
-              }
-              required
-              className="w-full border border-gray-300 rounded-md p-2 h-32 resize-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div className="flex justify-end gap-4">
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-              disabled={isLoading}
-            >
-              {isLoading ? "Updating..." : "Update"}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
-            >
-              Cancel
-            </button>
+            <Button text="Cancel" 
+            onClick={onClose} 
+            color="red"
+            type="text" />
           </div>
         </form>
       </div>
