@@ -4,9 +4,10 @@ import { Avatar, Button, InputText } from "@fattureincloud/fic-design-system";
 import { useGetComments } from "../../hooks/useGetComments";
 import { useGetPost } from "../../hooks/useGetPost";
 import { useCreateComment } from "../../hooks/useCreateComment";
-// import { FaPen } from "react-icons/fa";
-// import { useEditComment } from "../../hooks/useEditComment";
-// import { IoTrashBinOutline } from "react-icons/io5";
+import { useDeleteComment } from "../../hooks/useDeleteComment";
+import { useEditComment } from "../../hooks/useEditComment";
+import { FaPen } from "react-icons/fa";
+import { IoTrashBinOutline } from "react-icons/io5";
 
 interface ModalProps {
   isOpen: boolean;
@@ -17,8 +18,13 @@ interface ModalProps {
 const ModalPost: React.FC<ModalProps> = ({ isOpen, closeModal, postId }) => {
   const singlePost = useGetPost(postId);
   const comments = useGetComments(postId);
-  const { mutate, isPending } = useCreateComment(postId);
+  const { mutate: createComment, isPending } = useCreateComment(postId);
+  const { mutate: deleteComment } = useDeleteComment();
+  const { mutate: editComment } = useEditComment(postId);
+
   const [commentData, setCommentData] = useState({ text: "" });
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editText, setEditText] = useState<string>("");
 
   if (!isOpen) return null;
 
@@ -32,23 +38,35 @@ const ModalPost: React.FC<ModalProps> = ({ isOpen, closeModal, postId }) => {
       })
     : null;
 
-  const formattedUpdatedAt =
-    singlePost.data?.updated_at &&
-    singlePost.data.updated_at !== singlePost.data.created_at
-      ? new Date(singlePost.data.updated_at).toLocaleString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      : null;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutate(commentData, {
-      onSuccess: () => {},
+    createComment(commentData, {
+      onSuccess: () => {
+        setCommentData({ text: "" });
+      },
     });
+  };
+
+  const handleDelete = (commentId: number) => {
+    deleteComment({ postId, commentId });
+  };
+  
+
+  const handleEditStart = (commentId: number, text: string) => {
+    setEditingCommentId(commentId);
+    setEditText(text);
+  };
+
+  const handleEditSave = (commentId: number) => {
+    editComment(
+      { commentId, updatedComment: { text: editText } },
+      {
+        onSuccess: () => {
+          setEditingCommentId(null);
+          setEditText("");
+        },
+      }
+    );
   };
 
   return (
@@ -80,9 +98,9 @@ const ModalPost: React.FC<ModalProps> = ({ isOpen, closeModal, postId }) => {
             text={isPending ? "Commenting..." : "Comment"}
             onClick={handleSubmit}
           />
-         
-          {comments.data?.map((comment, index) => (
-            <div key={index} className="comment-card">
+
+          {comments.data?.map((comment) => (
+            <div key={comment.id} className="comment-card">
               <Avatar
                 text={comment.user.full_name}
                 size={30}
@@ -92,26 +110,32 @@ const ModalPost: React.FC<ModalProps> = ({ isOpen, closeModal, postId }) => {
                 {comment.user.first_name} {comment.user.last_name}
               </p>
               <br />
-              <p className="comment-text">{comment.text}</p>
+
+              {editingCommentId === comment.id ? (
+                <>
+                  <InputText
+                    value={editText}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setEditText(e.target.value)
+                    }
+                  />
+                  <Button text="Save" onClick={() => handleEditSave(comment.id)} />
+                </>
+              ) : (
+                <p className="comment-text">{comment.text}</p>
+              )}
+
+              <div className="comment-actions">
+                <FaPen onClick={() => handleEditStart(comment.id, comment.text)} />
+                <IoTrashBinOutline onClick={() => handleDelete(comment.id)} />
+              </div>
             </div>
           ))}
         </div>
-        {/* <FaPen 
-      />
-      <IoTrashBinOutline 
-      /> */}
-        <p className="post-date">Posted at: {formattedCreatedAt}</p>
-        {formattedUpdatedAt && (
-          <p className="post-date">Edited at: {formattedUpdatedAt}</p>
-        )}
 
-        <Button
-          color="blue"
-          onClick={closeModal}
-          size="medium"
-          text="Close"
-          type="text"
-        />
+        <p className="post-date">Posted at: {formattedCreatedAt}</p>
+
+        <Button color="blue" onClick={closeModal} size="medium" text="Close" type="text" />
       </div>
     </div>
   );

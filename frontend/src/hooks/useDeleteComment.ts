@@ -1,27 +1,30 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
-const API_URL="http://localhost:8080/posts/:postId/comments/:commentId"
+const deleteComment = async ({ postId, commentId, token }: { postId: number; commentId: number; token: string }) => {
+  if (!token) throw new Error("User is not authenticated");
 
-const deleteComment =  async(commentId:number) => {
-    const accessToken = localStorage.getItem("access_token");
-    const {data} =  await axios.delete(`${API_URL}/${commentId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-});
-return data;
-}
-    export const useDeleteComment = () => {
-       
-        const queryClient = useQueryClient();
-       
-        return useMutation({
-          mutationFn: async (commentId: number) => deleteComment(commentId),
-          onSuccess: () => {
-            queryClient.invalidateQueries({queryKey:
-                ["comments"]
-            });
-          },
-        });
-      };
+  await axios.delete(`http://localhost:8080/posts/${postId}/comments/${commentId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const useDeleteComment = () => {
+  const queryClient = useQueryClient();
+  const token = useSelector((state: RootState) => state.auth.user?.access_token) ?? "";
+
+  return useMutation({
+    mutationFn: ({ postId, commentId }: { postId: number; commentId: number }) => 
+      deleteComment({ postId, commentId, token }),
+    onSuccess: (_, { postId }) => {
+      queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+    },
+    onError: (error) => {
+      console.error("Failed to delete comment:", error);
+    },
+  });
+};
