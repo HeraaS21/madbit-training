@@ -1,4 +1,4 @@
-//r.query for to add a post
+//r.query to add a post
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useSelector } from "react-redux";

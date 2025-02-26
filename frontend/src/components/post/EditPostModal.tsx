@@ -1,23 +1,26 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ChangeEvent } from "react";
 import { Button, InputText } from "@fattureincloud/fic-design-system";
-import { useEditPost } from "../../hooks/ useUserPosts";
 import "./style.css";
+import { useEditPost } from "../../hooks/useEditPost";
+
+interface PostData{
+  id: number;
+  title: string;
+  text: string;
+}
+
 interface EditPostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  post: {
-    id: number;
-    title: string;
-    text: string;
-  } | null;
+  post: PostData | null;
 }
-
+ 
 const EditPostModal: React.FC<EditPostModalProps> = ({
   isOpen,
   onClose,
   post,
 }) => {
-  const { mutate, isLoading } = useEditPost();
+  const { mutate, isPending} = useEditPost();
   const [postData, setPostData] = useState({ title: "", text: "" });
   const titleInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,7 +41,7 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
     if (!post) return;
 
     mutate(
-      { postId: post.id, updatedPost: postData },
+      { postId: post.id, updatedPost: { title: postData.title, text: postData.text } },
       {
         onSuccess: () => {
           onClose();
@@ -57,20 +60,20 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
           <InputText
             label="Title"
             value={postData.title}
-            setValue={(value) => setPostData({ ...postData, title: value })}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => setPostData({ ...postData, title: event.target.value })}
             required
             ref={titleInputRef}
           />
           <InputText
             label="Text"
             value={postData.text}
-            setValue={(value) => setPostData({ ...postData, text: value })}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => setPostData({ ...postData, text: event.target.value })}
             required
           />
           <div className="flex gap-2 mt-3">
             <Button
               type="text"
-              text={isLoading ? "Updating..." : "Update"}
+              text={isPending ? "Updating..." : "Update"}
               onClick={handleSubmit}
             />
             <Button text="Cancel" 

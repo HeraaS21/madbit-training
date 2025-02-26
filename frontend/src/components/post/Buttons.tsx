@@ -1,7 +1,6 @@
-import React, { useState } from "react";
 import { Button } from "@fattureincloud/fic-design-system";
-import EditPostModal from "./EditPostModal";
-import { useDeletePost } from "../../hooks/ useUserPosts";
+import { useDeletePost } from "../../hooks/useDeletePost";
+
 
 interface ButtonsProps {
   post: {
@@ -11,9 +10,13 @@ interface ButtonsProps {
   };
 }
 
-const Buttons: React.FC<ButtonsProps> = ({ post }) => {
+const Buttons: React.FC<ButtonsProps> = ({
+  post,
+  onEdit,
+  editingPost,
+ 
+}) => {
   const deletePost = useDeletePost();
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleDelete = () => {
     deletePost.mutate(post.id);
@@ -23,7 +26,7 @@ const Buttons: React.FC<ButtonsProps> = ({ post }) => {
     <div className="flex gap-2 mt-3">
       <Button
         color="grey"
-        onClick={() => setIsEditModalOpen(true)}
+        onClick={() => onEdit(editingPost)}
         size="medium"
         text="Edit"
         type="text"
@@ -36,14 +39,6 @@ const Buttons: React.FC<ButtonsProps> = ({ post }) => {
         text="Delete"
         type="text"
       />
-
-      {isEditModalOpen && (
-        <EditPostModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          post={post}
-        />
-      )}
     </div>
   );
 };

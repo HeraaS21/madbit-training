@@ -9,7 +9,7 @@ const BottomNav = () => {
       <Link to="/home" className="nav-link">
         <IoMdHome className="nav-icon" />
       </Link>
-      <Link to="/add" className="nav-link">
+      <Link to="/add?modal=true" className="nav-link">
         <FaPlus className="nav-icon" />
       </Link>
       <Link to="/profile" className="nav-link">

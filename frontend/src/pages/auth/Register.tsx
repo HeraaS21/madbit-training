@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
 import { Button, InputText } from "@fattureincloud/fic-design-system";
 
+
 interface FormData {
   firstName: string;
   lastName: string;
@@ -24,7 +25,12 @@ const Register: React.FC = () => {
     email: "",
     password: "",
   });
-
+  const [validationErrors, setValidationErrors] = useState({
+    email: "",
+    password: "",
+    firstName:"",
+    lastName:"",
+  });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -32,14 +38,53 @@ const Register: React.FC = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const userData = {
-      email: formData.email,
-      password: formData.password,
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-    };
 
-    const resultAction = await dispatch(registerUser(userData));
+
+    if (!formData.email && !formData.password && !formData.firstName && !formData.lastName) {
+      setValidationErrors({
+        email: "Email is required",
+        password: "Password is required",
+        firstName:"First name is required",
+        lastName:"Last name is required",
+      });
+      return;
+    }
+  
+    if (!formData.email) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        email: "Email is required",
+      }));
+      return;
+    }
+  
+    if (!formData.password) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        password: "Password is required",
+      }));
+      return;
+    }
+  
+    if (!formData.firstName) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        first_name: "First name is required",
+      }));
+      return;
+    }
+  
+    if (!formData.lastName) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        last_name: "Last name is required",
+      }));
+      return;
+    }
+  
+
+
+    const resultAction = await dispatch(registerUser(formData));
 
     if (registerUser.fulfilled.match(resultAction)) {
       navigate("/");
@@ -67,6 +112,10 @@ const Register: React.FC = () => {
             onChange={handleChange}
             status="normal"
             value={formData.firstName}
+            helper={{
+              message: validationErrors.firstName,
+              status: "error",
+            }}
           />
           <InputText
             inputSize="large"
@@ -77,6 +126,11 @@ const Register: React.FC = () => {
             onChange={handleChange}
             status="normal"
             value={formData.lastName}
+            helper={{
+              message: validationErrors.lastName,
+              status: "error",
+            }}
+
           />
           <InputText
             inputSize="large"
@@ -87,6 +141,10 @@ const Register: React.FC = () => {
             onChange={handleChange}
             status="normal"
             value={formData.email}
+            helper={{
+              message: validationErrors.email,
+              status: "error",
+            }}
           />
           <InputText
             inputSize="large"
@@ -97,6 +155,10 @@ const Register: React.FC = () => {
             onChange={handleChange}
             status="normal"
             value={formData.password}
+            helper={{
+              message: validationErrors.password,
+              status: "error",
+            }}
           />
 
           <Button
@@ -122,3 +184,4 @@ const Register: React.FC = () => {
 };
 
 export default Register;
+

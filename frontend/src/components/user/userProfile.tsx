@@ -3,29 +3,33 @@ import {
   Dropdown,
   DropdownItemProps,
 } from "@fattureincloud/fic-design-system";
-import { useState } from "react";
-import { useUser } from "../../hooks/useUser";
+import { useGetUser } from "../../hooks/useGetUser";
 import { useLogout } from "../../pages/auth/Logout";
 import { IoIosLogOut } from "react-icons/io";
 
-const getInitials = (fullName: string): string => {
-  return fullName
-    .split(" ")
-    .map((name) => name.charAt(0).toUpperCase())
-    .join("");
-};
+interface User {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  picture: string | null;
+  created_at: string;
+}
+
+
 
 const UserProfile = (): JSX.Element => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { data: user, isLoading, error } = useUser();
+  const { data: user, isLoading, error } = useGetUser<User>();
   const handleLogout = useLogout();
 
   if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (error) return <p>Error: {(error as Error).message}</p>;
+  if (!user) return <p>No user data</p>;
 
   const content: DropdownItemProps[] = [
     { text: user.email, type: "default" },
-    { text: <IoIosLogOut />, type: "danger", onClick: handleLogout },
+    { text: "Logout", type: "danger", icon: <IoIosLogOut />, onClick: handleLogout },
   ];
 
   return (
@@ -34,20 +38,14 @@ const UserProfile = (): JSX.Element => {
     >
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         <Avatar
-          text={user.picture ? "" : getInitials(user.full_name)}
+          text={user.full_name}
           size={40}
-          src={user.picture || undefined}
-          onClick={() => setIsOpen(!isOpen)}
         />
-        <div>
-          {isOpen && (
-            <Dropdown
-              title={<span>{user.full_name}</span>}
-              content={content}
-              triggerStyles={{ color: "red", boxShadow: "none" }}
-            />
-          )}
-        </div>
+        <Dropdown
+          title={<span>{user.full_name}</span>}
+          content={content}
+          triggerStyles={{ color: "red", boxShadow: "none" }}
+        />
       </div>
     </div>
   );

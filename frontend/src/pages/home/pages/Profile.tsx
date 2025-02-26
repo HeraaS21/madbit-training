@@ -1,59 +1,54 @@
-import  { useState } from "react";
-import { useUser } from "../../../hooks/useUser";
+import { useState } from "react";
+import { useGetUser } from "../../../hooks/useGetUser";
 import AddPostModal from "../../../components/post/AddPostModal";
-import EditPostModal from "../../../components/post/EditPostModal";
-import UserProfile from "../../../components/user/userProfile";
-import Post from "../../../components/post/Post";
-import { useUserPosts } from "../../../hooks/ useUserPosts";
-
+import PostCard from "../../../components/post/PostCard";
+import UserProfile from "../../../components/user/UserProfile";
+import { useGetPosts } from "../../../hooks/ useGetPosts";
 
 const Profile = () => {
-  const { data: user, isLoading, error } = useUser();
-  const { data: posts } = useUserPosts(user?.id);
+  const userData = useGetUser();
+  const posts = useGetPosts();
+ 
+  
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingPost, setEditingPost] = useState<{ id: number; title: string; text: string } | null>(null);
+  const oneUserPosts= posts.data?.filter((post) => post.user.id === userData.data?.id) || [];
 
-  const openEditModal = (post: { id: number; title: string; text: string }) => {
-    setEditingPost(post);
-    setIsEditModalOpen(true);
-  };
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-
+  if (userData.isLoading) return <p>Loading...</p>;
+  if (userData.error) return <p>Error: {userData.error.message}</p>;
+  
   return (
     <div className="max-w-2xl mx-auto p-4">
       <UserProfile />
 
-      <AddPostModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
+      <AddPostModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
 
-      {editingPost && (
-        <EditPostModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          post={editingPost}
-        />
-      )}
+      <h2 style={{ fontFamily: "Helvetica" }}>
+        {userData?.data?.full_name}'s Posts
+      </h2>
 
-      <h2 style={{ fontFamily: "Helvetica" }}>{user.full_name}'s Posts</h2>
-
-      {posts?.length ? (
-        <div className="grid gap-4 mt-4">
-          {posts.map((post) => (
+      {oneUserPosts.length ? (
+        <div className="flex gap-2 mt-3">
+          {oneUserPosts.map((post) => (
             <div
               key={post.id}
               className="bg-white shadow-md rounded-lg p-4 border border-gray-200"
             >
-              <Post post={post} onEdit={() => openEditModal(post)} />
+              <PostCard post={post} />
             </div>
           ))}
         </div>
       ) : (
         <p className="text-gray-500">No posts found.</p>
       )}
+
+      
     </div>
   );
 };
 
 export default Profile;
+
