@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
 import { Button, InputText } from "@fattureincloud/fic-design-system";
 
-
 interface FormData {
   firstName: string;
   lastName: string;
@@ -25,64 +24,41 @@ const Register: React.FC = () => {
     email: "",
     password: "",
   });
+
   const [validationErrors, setValidationErrors] = useState({
     email: "",
     password: "",
-    firstName:"",
-    lastName:"",
+    firstName: "",
+    lastName: "",
   });
+
+  const [submitted, setSubmitted] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    if (submitted) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitted(true);
 
-
-
-    if (!formData.email && !formData.password && !formData.firstName && !formData.lastName) {
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
       setValidationErrors({
-        email: "Email is required",
-        password: "Password is required",
-        firstName:"First name is required",
-        lastName:"Last name is required",
+        firstName: !formData.firstName ? "First name is required" : "",
+        lastName: !formData.lastName ? "Last name is required" : "",
+        email: !formData.email ? "Email is required" : "",
+        password: !formData.password ? "Password is required" : "",
       });
       return;
     }
-  
-    if (!formData.email) {
-      setValidationErrors((prev) => ({
-        ...prev,
-        email: "Email is required",
-      }));
-      return;
-    }
-  
-    if (!formData.password) {
-      setValidationErrors((prev) => ({
-        ...prev,
-        password: "Password is required",
-      }));
-      return;
-    }
-  
-    if (!formData.firstName) {
-      setValidationErrors((prev) => ({
-        ...prev,
-        first_name: "First name is required",
-      }));
-      return;
-    }
-  
-    if (!formData.lastName) {
-      setValidationErrors((prev) => ({
-        ...prev,
-        last_name: "Last name is required",
-      }));
-      return;
-    }
-  
-
 
     const resultAction = await dispatch(registerUser(formData));
 
@@ -100,8 +76,8 @@ const Register: React.FC = () => {
         />
       </div>
       <div className="register-right">
-        <h2 style={{fontFamily: "Helvetica"}}>Register</h2>
-        <p style={{fontFamily: "Helvetica"}}>Welcome! Please register to your account.</p>
+        <h2 style={{ fontFamily: "Helvetica" }}>Register</h2>
+        <p style={{ fontFamily: "Helvetica" }}>Welcome! Please register to your account.</p>
         <form onSubmit={handleRegister} className="register-form">
           <InputText
             inputSize="large"
@@ -110,12 +86,13 @@ const Register: React.FC = () => {
             placeholder="First Name"
             required
             onChange={handleChange}
-            status="normal"
+            status={validationErrors.firstName ? "error" : "normal"}
             value={formData.firstName}
-            helper={{
-              message: validationErrors.firstName,
-              status: "error",
-            }}
+            helper={
+              submitted && validationErrors.firstName
+                ? { message: validationErrors.firstName, status: "error" }
+                : undefined
+            }
           />
           <InputText
             inputSize="large"
@@ -124,13 +101,13 @@ const Register: React.FC = () => {
             placeholder="Last Name"
             required
             onChange={handleChange}
-            status="normal"
+            status={validationErrors.lastName ? "error" : "normal"}
             value={formData.lastName}
-            helper={{
-              message: validationErrors.lastName,
-              status: "error",
-            }}
-
+            helper={
+              submitted && validationErrors.lastName
+                ? { message: validationErrors.lastName, status: "error" }
+                : undefined
+            }
           />
           <InputText
             inputSize="large"
@@ -139,12 +116,13 @@ const Register: React.FC = () => {
             placeholder="Email"
             required
             onChange={handleChange}
-            status="normal"
+            status={validationErrors.email ? "error" : "normal"}
             value={formData.email}
-            helper={{
-              message: validationErrors.email,
-              status: "error",
-            }}
+            helper={
+              submitted && validationErrors.email
+                ? { message: validationErrors.email, status: "error" }
+                : undefined
+            }
           />
           <InputText
             inputSize="large"
@@ -153,14 +131,14 @@ const Register: React.FC = () => {
             placeholder="Password"
             required
             onChange={handleChange}
-            status="normal"
+            status={validationErrors.password ? "error" : "normal"}
             value={formData.password}
-            helper={{
-              message: validationErrors.password,
-              status: "error",
-            }}
+            helper={
+              submitted && validationErrors.password
+                ? { message: validationErrors.password, status: "error" }
+                : undefined
+            }
           />
-
           <Button
             color="blue"
             onClick={handleRegister}
@@ -172,7 +150,7 @@ const Register: React.FC = () => {
 
         {error && <p className="error-message">{error}</p>}
 
-        <p style={{fontFamily: "Helvetica"}}>
+        <p style={{ fontFamily: "Helvetica" }}>
           Already have an account?{" "}
           <Link to="/" style={{ color: "#3a9ad9", textDecoration: "none" }}>
             Login
@@ -184,4 +162,3 @@ const Register: React.FC = () => {
 };
 
 export default Register;
-

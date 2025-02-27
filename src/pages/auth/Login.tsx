@@ -26,46 +26,31 @@ const Login = () => {
     password: "",
   });
 
+  const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    setValidationErrors((prev) => ({
-      ...prev,
-      email: "",
-    }));
+    if (submitted) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitted(true);
 
-    
-
-    if (!formData.email && !formData.password) {
+    if (!formData.email || !formData.password) {
       setValidationErrors({
-        email: "Email is required",
-        password: "Password is required",
+        email: !formData.email ? "Email is required" : "",
+        password: !formData.password ? "Password is required" : "",
       });
       return;
     }
-  
-    if (!formData.email) {
-      setValidationErrors((prev) => ({
-        ...prev,
-        email: "Email is required",
-      }));
-      return;
-    }
-  
-    if (!formData.password) {
-      setValidationErrors((prev) => ({
-        ...prev,
-        password: "Password is required",
-      }));
-      return;
-    }
-  
 
     const resultAction = await dispatch(loginUser(formData));
 
@@ -73,17 +58,13 @@ const Login = () => {
       navigate("/home");
     } else {
       const errorMessage = resultAction.payload || "Login failed";
-      if (errorMessage === "Email not found") {
-        setValidationErrors((prev) => ({ ...prev, email: "Email not found" }));
-      } else if (errorMessage === "Incorrect password") {
-        setValidationErrors((prev) => ({
-          ...prev,
-          password: "Incorrect password",
-        }));
-      }
+      setValidationErrors((prev) => ({
+        ...prev,
+        email: errorMessage === "Email not found" ? "Email not found" : prev.email,
+        password: errorMessage === "Incorrect password" ? "Incorrect password" : prev.password,
+      }));
     }
   };
-
 
   return (
     <div className="login-container">
@@ -102,10 +83,11 @@ const Login = () => {
             onChange={handleChange}
             status={validationErrors.email ? "error" : "normal"}
             value={formData.email}
-            helper={{
-              message: validationErrors.email,
-              status: "error",
-            }}
+            helper={
+              submitted && validationErrors.email
+                ? { message: validationErrors.email, status: "error" }
+                : undefined
+            }
           />
           <InputText
             inputSize="large"
@@ -116,10 +98,11 @@ const Login = () => {
             onChange={handleChange}
             status={validationErrors.password ? "error" : "normal"}
             value={formData.password}
-            helper={{
-              message: validationErrors.password,
-              status: "error",
-            }}
+            helper={
+              submitted && validationErrors.password
+                ? { message: validationErrors.password, status: "error" }
+                : undefined
+            }
           />
           <Button
             color="blue"
@@ -130,18 +113,9 @@ const Login = () => {
           />
         </form>
         {error && <p className="error-message">{error}</p>}
-        <p
-          style={{
-            fontFamily: "Helvetica",
-            color: "grey",
-            marginBottom: "10px",
-          }}
-        >
+        <p style={{ fontFamily: "Helvetica", color: "grey", marginBottom: "10px" }}>
           New User?{" "}
-          <Link
-            to="/register"
-            style={{ color: "#3a9ad9", textDecoration: "none" }}
-          >
+          <Link to="/register" style={{ color: "#3a9ad9", textDecoration: "none" }}>
             Register
           </Link>
         </p>
