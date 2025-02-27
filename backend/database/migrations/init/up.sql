@@ -1,2 +1,0 @@
-CREATE DATABASE IF NOT EXISTS blog_development;
-CREATE DATABASE IF NOT EXISTS blog_testing;
