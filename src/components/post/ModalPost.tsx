@@ -8,7 +8,7 @@ import { useDeleteComment } from "../../hooks/useDeleteComment";
 import { useEditComment } from "../../hooks/useEditComment";
 import { FaPen } from "react-icons/fa";
 import { IoTrashBinOutline } from "react-icons/io5";
-import { MdDataSaverOff } from "react-icons/md";
+import { MdOutlineDone } from "react-icons/md";
 import { useGetUser } from "../../hooks/useGetUser";
 
 interface ModalProps {
@@ -18,7 +18,6 @@ interface ModalProps {
 }
 
 const ModalPost: React.FC<ModalProps> = ({ isOpen, closeModal, postId }) => {
-  
   const singlePost = useGetPost(postId);
   const comments = useGetComments(postId);
   const { mutate: createComment, isPending } = useCreateComment(postId);
@@ -28,7 +27,6 @@ const ModalPost: React.FC<ModalProps> = ({ isOpen, closeModal, postId }) => {
   const [commentData, setCommentData] = useState({ text: "" });
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editText, setEditText] = useState<string>("");
-
   if (!isOpen) return null;
 
   const formattedCreatedAt = singlePost.data?.created_at
@@ -84,23 +82,162 @@ const ModalPost: React.FC<ModalProps> = ({ isOpen, closeModal, postId }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={closeModal}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <Avatar
-          text={singlePost.data?.user.full_name}
-          size={30}
-          style={{ backgroundColor: "#1260b4", color: "#d2e6fb" }}
-        />
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        backdropFilter: "blur(5px)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 999,
+      }}
+      onClick={closeModal}
+    >
+      <div
+        style={{
+          width: "800px",
+          height: "800px",
+          backgroundColor: "white",
+          borderRadius: "8px",
+          padding: "20px",
+          boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+          zIndex: 1000,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <Avatar
+            text={singlePost.data?.user.full_name}
+            size={30}
+            style={{ backgroundColor: "#1260b4", color: "#d2e6fb" }}
+          />
+          <h4>{singlePost.data?.user.full_name}</h4>
+        </div>
 
-        <h4>{singlePost.data?.user.full_name}</h4>
-        <h3 className="post-title">{singlePost.data?.title}</h3>
-        <p className="post-text">{singlePost.data?.text}</p>
+        <h3 style={{ fontSize: "20px", fontWeight: "bold", marginTop: "10px" }}>
+          {singlePost.data?.title}
+        </h3>
+        <p
+          style={{ flexGrow: 1, overflow: "hidden", textOverflow: "ellipsis" }}
+        >
+          {singlePost.data?.text}
+        </p>
 
-        <div className="comments-section">
+        <div
+          style={{
+            flexGrow: 1,
+            overflowY: "auto",
+            maxHeight: "250px",
+            padding: "10px 0",
+          }}
+        >
           <h4>Comments:</h4>
+          {comments.data?.map((comment) => (
+            <div
+              key={comment.id}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "5px",
+                padding: "10px 20px",
+                borderBottom: "1px solid #ddd",
+              }}
+            >
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+              >
+                <Avatar
+                  text={comment.user.full_name}
+                  size={30}
+                  style={{ backgroundColor: "black", color: "white" }}
+                />
+                <p style={{ fontWeight: "bold", margin: 0 }}>
+                  {comment.user.first_name} {comment.user.last_name}
+                </p>
+              </div>
 
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                }}
+              >
+                {editingCommentId === comment.id ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      flexGrow: 1,
+                    }}
+                  >
+                    <InputText
+                      value={editText}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        setEditText(e.target.value)
+                      }
+                    />
+                  </div>
+                ) : (
+                  <p
+                    style={{
+                      margin: 0,
+                      wordBreak: "break-word",
+                      whiteSpace: "normal",
+                      flexGrow: 1,
+                      paddingLeft: "10px",
+                    }}
+                  >
+                    {comment.text}
+                  </p>
+                )}
+
+                {loggedInUser?.id === comment.user.id && (
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                      paddingRight: "10px",
+                    }}
+                  >
+                    {editingCommentId === comment.id ? (
+                      <MdOutlineDone
+                        onClick={() => handleEditSave(comment.id)}
+                      />
+                    ) : (
+                      <>
+                        <FaPen
+                          onClick={() =>
+                            handleEditStart(comment.id, comment.text)
+                          }
+                        />
+                        <IoTrashBinOutline
+                          onClick={() => handleDelete(comment.id)}
+                        />
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <br />
+
+        <div style={{ display: "flex" }}>
           <InputText
-            label="Add Comment"
             value={commentData.text}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               setCommentData({ text: event.target.value })
@@ -112,59 +249,22 @@ const ModalPost: React.FC<ModalProps> = ({ isOpen, closeModal, postId }) => {
             text={isPending ? "Commenting..." : "Comment"}
             onClick={handleSubmit}
           />
-
-          {comments.data?.map((comment) => (
-            <div key={comment.id} className="comment-card">
-              <Avatar
-                text={comment.user.full_name}
-                size={30}
-                style={{ backgroundColor: "black", color: "white" }}
-              />
-              <p className="commentauthor">
-                {comment.user.first_name} {comment.user.last_name}
-              </p>
-              <br />
-
-              {editingCommentId === comment.id ? (
-                <>
-                  <InputText
-                    value={editText}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      setEditText(e.target.value)
-                    }
-                  />
-                  <MdDataSaverOff onClick={() => handleEditSave(comment.id)} />
-                </>
-              ) : (
-                <p className="comment-text">{comment.text}</p>
-              )}
-
-              <div className="comment-actions">
-                {loggedInUser?.id === comment.user.id && (
-                  <div className="comment-actions">
-                    <FaPen
-                      onClick={() => handleEditStart(comment.id, comment.text)}
-                    />
-                    <IoTrashBinOutline
-                      onClick={() => handleDelete(comment.id)}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
         </div>
 
-        <p className="post-date">Posted at: {formattedCreatedAt}</p>
+        <p style={{ fontSize: "12px", color: "gray" }}>
+          Posted at: {formattedCreatedAt}
+        </p>
         {formattedUpdatedAt && (
-          <p className="post-date">Edited at: {formattedUpdatedAt}</p>
+          <p style={{ fontSize: "12px", color: "gray" }}>
+            Edited at: {formattedUpdatedAt}
+          </p>
         )}
 
         <Button
-          color="blue"
+          color="red"
           onClick={closeModal}
           size="medium"
-          text="Close"
+          text="X"
           type="text"
         />
       </div>

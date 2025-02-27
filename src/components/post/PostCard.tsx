@@ -46,7 +46,12 @@ const PostCard: React.FC<PostProps> = ({ post }) => {
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [postId, setPostId] = useState<number>();
+  const MAX_LENGTH = 300; 
 
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+  };
+  
   const openEditModal = (post: Post) => {
     setEditingPost(post);
     setIsEditModalOpen(true);
@@ -80,25 +85,28 @@ const PostCard: React.FC<PostProps> = ({ post }) => {
   return (
     <div className="container">
       <div className="post-card">
-        <Avatar
-          text={post.user.full_name}
-          size={30}
-          style={{ backgroundColor: "#1260b4", color: "#d2e6fb" }}
-        />
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <Avatar
+            text={post.user.full_name}
+            size={30}
+            style={{ backgroundColor: "#1260b4", color: "#d2e6fb" }}
+          />
 
-        <h4>{post.user.full_name}</h4>
+          <h4>{post.user.full_name}</h4>
+        </div>
         <h3 className="post-title" onClick={() => openModal(post)}>
           {post.title}
         </h3>
         <hr />
-        <p className="post-text">{post.text}</p>
+        <p className="post-text">{truncateText(post.text, MAX_LENGTH)}</p>
+
 
         <div className="post-footer">
           <div className="footer-left">
             <span className="post-footer">Comments: {post.comments_count}</span>
           </div>
 
-          <div className="footer-center">
+          <div className="footer-center" style={{position:"static"}}>
             <>
               {isLiked ? (
                 <FaHeart
@@ -121,6 +129,7 @@ const PostCard: React.FC<PostProps> = ({ post }) => {
               )}
             </>
           </div>
+          <div className="posts-container">
           {userData && post.user.id === userData.data?.id && (
             <div className="footer-right">
               <Buttons
@@ -144,6 +153,7 @@ const PostCard: React.FC<PostProps> = ({ post }) => {
           />
         )}
       </div>
+    </div>
     </div>
   );
 };

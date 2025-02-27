@@ -36,7 +36,7 @@ const UserProfile = (): JSX.Element => {
           size={40}
         />
         <Dropdown
-          title={<span>{user.full_name}</span>}
+          title={user.full_name}
           content={content}
           triggerStyles={{ color: "red", boxShadow: "none" }}
         />
