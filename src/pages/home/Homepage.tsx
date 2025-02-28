@@ -29,12 +29,12 @@ const Home = () => {
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: "1200px" }}>
-        <h2>MADBIT</h2>
+        <h2 style={{color:"#1260b4"}}>MADBIT</h2>
         <UserProfile />
       </div>
   
       <hr style={{ width: "100%", maxWidth: "1200px" }} />
-      <h1 style={{ fontFamily: "Helvetica", fontSize: "50px" }}>A Lumen Blog</h1>
+      <h1 style={{ fontFamily: "Helvetica", fontSize: "50px", color:"#1260b4" }}>A Lumen Blog</h1>
   
       {userPosts.length ? (
         <div

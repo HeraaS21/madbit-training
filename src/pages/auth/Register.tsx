@@ -50,7 +50,12 @@ const Register: React.FC = () => {
     e.preventDefault();
     setSubmitted(true);
 
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.password
+    ) {
       setValidationErrors({
         firstName: !formData.firstName ? "First name is required" : "",
         lastName: !formData.lastName ? "Last name is required" : "",
@@ -77,7 +82,9 @@ const Register: React.FC = () => {
       </div>
       <div className="register-right">
         <h2 style={{ fontFamily: "Helvetica" }}>Register</h2>
-        <p style={{ fontFamily: "Helvetica" }}>Welcome! Please register to your account.</p>
+        <p style={{ fontFamily: "Helvetica" }}>
+          Welcome! Please register to your account.
+        </p>
         <form onSubmit={handleRegister} className="register-form">
           <InputText
             inputSize="large"

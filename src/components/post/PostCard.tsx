@@ -84,77 +84,77 @@ const PostCard: React.FC<PostProps> = ({ post }) => {
 
   return (
     <div className="container">
-      <div className="post-card">
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <Avatar
-            text={post.user.full_name}
-            size={30}
-            style={{ backgroundColor: "#1260b4", color: "#d2e6fb" }}
-          />
+  <div className="post-card">
+    <div className="post-header" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+      <Avatar
+        text={post.user.full_name}
+        size={30}
+        style={{ backgroundColor: "#1260b4", color: "#d2e6fb" }}
+      />
+      <h4>{post.user.full_name}</h4>
+    </div>
 
-          <h4>{post.user.full_name}</h4>
-        </div>
-        <h3 className="post-title" onClick={() => openModal(post)}>
-          {post.title}
-        </h3>
-        <hr />
-        <p className="post-text">{truncateText(post.text, MAX_LENGTH)}</p>
+    <h3 className="post-title" onClick={() => openModal(post)}>
+      {post.title}
+    </h3>
+    <hr />
+    <p className="post-text">{truncateText(post.text, MAX_LENGTH)}</p>
 
 
-        <div className="post-footer">
-          <div className="footer-left">
-            <span className="post-footer">Comments: {post.comments_count}</span>
-          </div>
+    <div className="post-footer">
+      <div className="footer-left">
+        <span className="post-footer">Comments: {post.comments_count}</span>
+      </div>
 
-          <div className="footer-center" style={{position:"static"}}>
-            <>
-              {isLiked ? (
-                <FaHeart
-                  style={{
-                    color: "#A91B0D",
-                    fontSize: "20px",
-                    cursor: "pointer",
-                  }}
-                  onClick={toggleLike}
-                />
-              ) : (
-                <FaRegHeart
-                  style={{
-                    color: "#A91B0D",
-                    fontSize: "20px",
-                    cursor: "pointer",
-                  }}
-                  onClick={toggleLike}
-                />
-              )}
-            </>
-          </div>
-          <div className="posts-container">
-          {userData && post.user.id === userData.data?.id && (
-            <div className="footer-right">
-              <Buttons
-                post={post}
-                onEdit={() => openEditModal(post)}
-                isEditModalOpen={isEditModalOpen}
-                editingPost={editingPost}
-                setIsEditModalOpen={setIsEditModalOpen}
-              />
-            </div>
+      <div className="footer-center" style={{ position: "static" }}>
+        <>
+          {isLiked ? (
+            <FaHeart
+              style={{
+                color: "#A91B0D",
+                fontSize: "20px",
+                cursor: "pointer",
+              }}
+              onClick={toggleLike}
+            />
+          ) : (
+            <FaRegHeart
+              style={{
+                color: "#A91B0D",
+                fontSize: "20px",
+                cursor: "pointer",
+              }}
+              onClick={toggleLike}
+            />
           )}
-        </div>
+        </>
+      </div>
 
-        <Modal isOpen={isModalOpen} closeModal={closeModal} postId={postId!} />
-
-        {isEditModalOpen && (
-          <EditPostModal
-            isOpen={isEditModalOpen}
-            onClose={() => setIsEditModalOpen(false)}
+      <div className="footer-right">
+        {userData && post.user.id === userData.data?.id && (
+          <Buttons
             post={post}
+            onEdit={() => openEditModal(post)}
+            isEditModalOpen={isEditModalOpen}
+            editingPost={editingPost}
+            setIsEditModalOpen={setIsEditModalOpen}
           />
         )}
       </div>
     </div>
-    </div>
+
+    <Modal isOpen={isModalOpen} closeModal={closeModal} postId={postId!} />
+
+    {isEditModalOpen && (
+      <EditPostModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        post={post}
+      />
+    )}
+  </div>
+</div>
+
   );
 };
 

@@ -246,3 +246,48 @@
 
 
 
+.post-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; 
+  background-color: #d2e6fb;
+  border: 1px solid #1260b4;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.post-title {
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.post-text {
+  flex-grow: 1; 
+}
+
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.footer-left,
+.footer-center,
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-center {
+  justify-content: center;
+}

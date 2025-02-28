@@ -117,7 +117,7 @@ const ModalPost: React.FC<ModalProps> = ({ isOpen, closeModal, postId }) => {
           <Avatar
             text={singlePost.data?.user.full_name}
             size={30}
-            style={{ backgroundColor: "#1260b4", color: "#d2e6fb" }}
+            style={{ backgroundColor: "black", color: "white" }}
           />
           <h4>{singlePost.data?.user.full_name}</h4>
         </div>

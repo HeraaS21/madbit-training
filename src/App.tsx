@@ -6,7 +6,6 @@ import Home from "./pages/home/Homepage";
 import BottomNav from "./layout/BottomNav";
 import Profile from "./pages/home/Profile";
 
-
 function App() {
   return (
     <Routes>

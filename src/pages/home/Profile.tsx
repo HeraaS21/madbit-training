@@ -42,7 +42,7 @@ const Profile = () => {
 
        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
     
-      <h2 style={{ fontFamily: "Helvetica" }}>
+      <h2 style={{ fontFamily: "Helvetica", color:"#0056b3"}}>
         {userData?.data?.full_name}'s Posts
       </h2>
       <UserProfile />
