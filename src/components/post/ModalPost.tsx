@@ -39,18 +39,6 @@ const ModalPost: React.FC<ModalProps> = ({ isOpen, closeModal, postId }) => {
       })
     : null;
 
-  const formattedUpdatedAt =
-    singlePost.data?.updated_at &&
-    singlePost.data.updated_at !== singlePost.data.created_at
-      ? new Date(singlePost.data.updated_at).toLocaleString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      : null;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     createComment(commentData, {
@@ -254,11 +242,6 @@ const ModalPost: React.FC<ModalProps> = ({ isOpen, closeModal, postId }) => {
         <p style={{ fontSize: "12px", color: "gray" }}>
           Posted at: {formattedCreatedAt}
         </p>
-        {formattedUpdatedAt && (
-          <p style={{ fontSize: "12px", color: "gray" }}>
-            Edited at: {formattedUpdatedAt}
-          </p>
-        )}
 
         <Button
           color="red"
